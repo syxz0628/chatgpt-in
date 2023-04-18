@@ -90,7 +90,7 @@ $(document).ready(function() {
     const maxCount = 10; // 最大询问次数
   
   // 处理用户输入
-    chatBtn.click(function() {
+  chatBtn.click(function() {
     // 测试点击次数
 	if (count >= maxCount) {
       addFailMessage('<span style="color:red;">' + '已达最大提问次数！请刷新网页!' + '</span>');
@@ -109,16 +109,22 @@ $(document).ready(function() {
     if ($(".key .ipt-1").prop("checked")){
       var apiKey = $(".key .ipt-2").val();
       if (apiKey.length < 20 ){
-          common_ops.alert("请输入正确的 api key ！",function(){
+          addFailMessage('<span style="color:red;">' + '请勾选APIkey并输入正确的api key!' + '</span>');
             chatInput.val('');
             // 重新绑定键盘事件
             chatInput.on("keydown",handleEnter);
-          })
           return
       }else{
         data.apiKey = apiKey
       }
-    }
+    }else{
+        addFailMessage('<span style="color:red;">' + '请勾选APIkey并输入正确的api key!' + '</span>');
+		chatInput.val('');
+        // 重新绑定键盘事件
+        chatInput.on("keydown",handleEnter);
+		
+		return
+      }
 
     var message = chatInput.val();
     if (message.length == 0){
@@ -139,11 +145,12 @@ $(document).ready(function() {
     chatBtn.attr('disabled',true)
     var placeholder = chatInput.attr('placeholder');
 	chatInput.attr('placeholder', '正在进行查询，请稍候...');
-    //chatInput.hide();
 	chatInput.prop('disabled', true);
+	// 记录当前收到的回复次数，决定是否删除数据
+	countpop=count
 	
     data.prompt = messages
-
+    
     // 发送信息到后台
 	$.ajax({
       url: 'https://open.aiproxy.xyz/v1/chat/completions',
@@ -179,15 +186,17 @@ $(document).ready(function() {
 		count++; 
       },
       error: function(jqXHR, textStatus, errorThrown) {
-        addFailMessage('<span style="color:red;">' + '出错啦！请稍后再试!' + '</span>');
+        addFailMessage('<span style="color:red;">' + '网络繁忙！请5s后再试...<之前正常收到的对话保留，除非网页刷新>' + '</span>');
         // 重新绑定键盘事件
 		chatBtn.attr('disabled',false)
         chatInput.on("keydown",handleEnter);
-		chatInput.attr('placeholder', placeholder);
+
 		chatInput.prop('disabled', false);
 		chatInput.focus();
+		chatInput.attr('placeholder', placeholder);
         // 失败就让用户输入信息从数组删除
-		messages.pop() 
+		messages.pop()
+		//addFailMessage('<span style="color:red;">' + messages + '</span>');
       }
     });
 
