@@ -47,6 +47,11 @@ $(document).ready(function() {
 
   // 存储对话信息,实现连续对话
   var messages = []
+  
+
+  
+  
+
 
   // 转义html代码，防止在浏览器渲染
   function escapeHtml(html) {
@@ -81,9 +86,18 @@ $(document).ready(function() {
     chatWindow.animate({ scrollTop: chatWindow.prop('scrollHeight') }, 500);
   }
   
+    let count = 0; // 新增计数器变量
+    const maxCount = 10; // 最大询问次数
+  
   // 处理用户输入
-  chatBtn.click(function() {
-    // 解绑键盘事件
+    chatBtn.click(function() {
+    // 测试点击次数
+	if (count >= maxCount) {
+      addFailMessage('<span style="color:red;">' + '已达最大提问次数！请刷新网页!' + '</span>');
+    return;
+    }
+	
+	// 解绑键盘事件
     chatInput.off("keydown",handleEnter);
     
     // 保存api key与对话数据
@@ -104,7 +118,6 @@ $(document).ready(function() {
       }else{
         data.apiKey = apiKey
       }
-
     }
 
     var message = chatInput.val();
@@ -117,19 +130,22 @@ $(document).ready(function() {
       return
     }
 
-
     addMessage(message,"avatar.png");
 
     // 将用户消息保存到数组
     messages.push({"role": "user", "content": message})
 
-    // 收到回复前让按钮不可点击
+    // 收到回复前让按钮不可点击，让文本框显示等待并无法输入
     chatBtn.attr('disabled',true)
-
+    var placeholder = chatInput.attr('placeholder');
+	chatInput.attr('placeholder', '正在进行查询，请稍候...');
+    //chatInput.hide();
+	chatInput.prop('disabled', true);
+	
     data.prompt = messages
 
     // 发送信息到后台
-    $.ajax({
+	$.ajax({
       url: 'https://open.aiproxy.xyz/v1/chat/completions',
       method: 'POST',
       headers: {
@@ -138,7 +154,9 @@ $(document).ready(function() {
       },
       data: JSON.stringify({
         "messages": data.prompt,
-        "model": "gpt-3.5-turbo",
+        //"model": "gpt-4.0",
+        //"max_tokens": 4096,
+		"model": "gpt-3.5-turbo",
         "max_tokens": 2048,
         "temperature": 0.5,
         "top_p": 1,
@@ -152,16 +170,27 @@ $(document).ready(function() {
         chatBtn.attr('disabled',false)
         // 重新绑定键盘事件
         chatInput.on("keydown",handleEnter);
+		chatInput.attr('placeholder', placeholder);
+		chatInput.prop('disabled', false);
+		chatInput.focus();
         // 将回复添加到数组
         messages.push(resp)
+		// 每次成功点击增加计数器
+		count++; 
       },
       error: function(jqXHR, textStatus, errorThrown) {
         addFailMessage('<span style="color:red;">' + '出错啦！请稍后再试!' + '</span>');
-        chatBtn.attr('disabled',false)
+        // 重新绑定键盘事件
+		chatBtn.attr('disabled',false)
         chatInput.on("keydown",handleEnter);
-        messages.pop() // 失败就让用户输入信息从数组删除
+		chatInput.attr('placeholder', placeholder);
+		chatInput.prop('disabled', false);
+		chatInput.focus();
+        // 失败就让用户输入信息从数组删除
+		messages.pop() 
       }
     });
+
   });
 
   // Enter键盘事件
@@ -185,4 +214,6 @@ $(document).ready(function() {
         e.preventDefault(); // 如果按下键F12,阻止事件
     }
   });
+  
+  
 });

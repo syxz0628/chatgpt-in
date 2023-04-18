@@ -28,14 +28,15 @@
       
         <div class="answer">
           <div class="tips text-center">
-            <h3 class="lead">API Key 暂有额度！无需打赏支持本站！</h3>
+            <!--  <h3 class="lead">API Key 暂有额度！无需打赏支持本站！</h3>   -->
             <h3 class="lead">请勿私自转发本站或API key！</h3>
+			<h3 class="lead">ChatGPT按反馈字数收费，每次提问将累计前面所有的问题和回复的字数，因此目前限制<span> 10 </span>次提问，若需再提问，请刷新网页，重输入API key。</h3>
             <img src="./static/images/reward.png" width="400">
           </div>
           <div id="chatWindow"></div>
             <div class="input-group ipt">
               <div class="col-xs-12">
-                <textarea id="chatInput" class="form-control" rows="1"></textarea>
+                <input id="chatInput" class="form-control" type="search" placeholder="请输入你的问题">
               </div>
               <button id="chatBtn" class="btn btn-primary" type="button">Go !</button>
             </div>
@@ -50,13 +51,12 @@
         <p class="lead text-center"><a href="https://blog.csdn.net/qq_57421630" target="_blank" style="color:red;text-decoration:none;">@联系原作者</a></p>
       </footer>
     </div>
-  </div>   
-
+  </div>  
+  
+  <script src="./static/js/jquery-2.1.1.js"></script>
+  <script src="./static/js/bootstrap.min.js"></script>
+  <script src="./static/js/marked.min.js"></script>
+  <script src="./static/js/layer/layer.js"></script>
+  <script src="./static/js/custom.js"></script>  
 </body>
-
-<script src="./static/js/jquery-2.1.1.js"></script>
-<script src="./static/js/bootstrap.min.js"></script>
-<script src="./static/js/marked.min.js"></script>
-<script src="./static/js/layer/layer.js"></script>
-<script src="./static/js/custom.js"></script>
 </html>
