@@ -119,7 +119,7 @@ $(document).ready(function() {
     // 判断是否使用自己的api key
     if ($(".key .ipt-1").prop("checked")){
       var apiKey = $(".key .ipt-2").val();
-      if (apiKey.length < 20 ){
+      if (apiKey.length < 10 ){
           addFailMessage('<span style="color:red;">' + '请勾选APIkey并输入正确的api key!' + '</span>');
             chatInput.val('');
             // 重新绑定键盘事件
