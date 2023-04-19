@@ -83,7 +83,8 @@ $(document).ready(function() {
   }
   
     let count = 0; // 新增计数器变量
-    const maxCount = 10; // 最大询问次数
+    const maxCount = 2; // 最大询问次数
+
 
     // 处理clear
   clearBtn.on('click', function() {
@@ -92,30 +93,27 @@ $(document).ready(function() {
     messages = []
     addFailMessage('<span style="color:red;">' + '你成功清除了所有内容，可以提10个新问题了！' + '</span>');
   });
+
+
     // 处理 reset
   ResetBtn.on('click', function() {
-    count= 0;  // 清空计数
-    messages = []
     addFailMessage('<span style="color:red;">' + '你成功重置了回复次数，可以提10个新问题了！' + '</span>');
+    messages = []
+	count= 0;  // 清空计数
   });
 
 
   // 处理用户输入
   chatBtn.click(function() {
-    // 测试点击次数
-	if (count >= maxCount) {
-      addFailMessage('<span style="color:red;">' + '已达最大提问次数！请点击ResetC!' + '</span>');
-    return;
-    }
-	
 	// 解绑键盘事件
     chatInput.off("keydown",handleEnter);
-    
+
     // 保存api key与对话数据
     var data = {
       "apiKey" : "", // 这里填写固定 apiKey
     }
-   
+
+
     // 判断是否使用自己的api key
     if ($(".key .ipt-1").prop("checked")){
       var apiKey = $(".key .ipt-2").val();
@@ -124,7 +122,7 @@ $(document).ready(function() {
             chatInput.val('');
             // 重新绑定键盘事件
             chatInput.on("keydown",handleEnter);
-          return
+          return;
       }else{
         data.apiKey = apiKey
       }
@@ -133,19 +131,25 @@ $(document).ready(function() {
 		chatInput.val('');
         // 重新绑定键盘事件
         chatInput.on("keydown",handleEnter);
-		
-		return
+		return;
       }
 
     var message = chatInput.val();
+
     if (message.length == 0){
       common_ops.alert("请输入内容！",function(){
         chatInput.val('');
         // 重新绑定键盘事件
         chatInput.on("keydown",handleEnter);
       })
-      return
+      return;
     }
+        // 测试点击次数
+	if (count >= maxCount) {
+      addMessage(message,"avatar.png");
+      addFailMessage('<span style="color:red;">' + '已达最大提问次数！请点击ResetC!' + '</span>');
+      chatInput.on("keydown",handleEnter);
+    }else{
 
     addMessage(message,"avatar.png");
 
@@ -187,37 +191,37 @@ $(document).ready(function() {
        
         addMessage(resp.content,"chatgpt.png");
         // 收到回复，让按钮可点击
-        chatBtn.attr('disabled',false)
-        clearBtn.attr('disabled',false)
-        ResetBtn.attr('disabled',false)
+        chatBtn.attr('disabled',false);
+        clearBtn.attr('disabled',false);
+        ResetBtn.attr('disabled',false);
         // 重新绑定键盘事件
         chatInput.on("keydown",handleEnter);
 		chatInput.attr('placeholder', placeholder);
 		chatInput.prop('disabled', false);
 		chatInput.focus();
         // 将回复添加到数组
-        messages.push(resp)
+        messages.push(resp);
 		// 每次成功点击增加计数器
 		count++; 
       },
       error: function(jqXHR, textStatus, errorThrown) {
         addFailMessage('<span style="color:red;">' + '网络繁忙！请5s后再试...<之前正常收到的对话保留，除非网页刷新>' + '</span>');
         // 重新绑定键盘事件
-		chatBtn.attr('disabled',false)
-		ResetBtn.attr('disabled',false)
-		clearBtn.attr('disabled',false)
+		chatBtn.attr('disabled',false);
+		ResetBtn.attr('disabled',false);
+		clearBtn.attr('disabled',false);
         chatInput.on("keydown",handleEnter);
 
 		chatInput.prop('disabled', false);
 		chatInput.focus();
 		chatInput.attr('placeholder', placeholder);
         // 失败就让用户输入信息从数组删除
-		messages.pop()
+		messages.pop();
 		//addFailMessage('<span style="color:red;">' + messages + '</span>');
       }
     });
 
-  });
+  }});
 
   // Enter键盘事件
   function handleEnter(e){
@@ -225,8 +229,12 @@ $(document).ready(function() {
       chatBtn.click();
     }else if (e.altKey && e.keyCode === 82) {
       ResetBtn.click();
+      e.preventDefault();
+      e.stopPropagation();
     }else if (e.altKey && e.keyCode === 67){
       clearBtn.click();
+      e.preventDefault();
+      e.stopPropagation();
     }
   }
 
