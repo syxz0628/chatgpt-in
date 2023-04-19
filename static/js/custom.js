@@ -44,14 +44,11 @@ $(document).ready(function() {
   var chatBtn = $('#chatBtn');
   var chatInput = $('#chatInput');
   var chatWindow = $('#chatWindow');
+  var clearBtn = $('#clearBtn');
+  var ResetBtn = $('#ResetBtn');
 
   // 存储对话信息,实现连续对话
   var messages = []
-  
-
-  
-  
-
 
   // 转义html代码，防止在浏览器渲染
   function escapeHtml(html) {
@@ -76,7 +73,6 @@ $(document).ready(function() {
     chatWindow.animate({ scrollTop: chatWindow.prop('scrollHeight') }, 500);
   }
 
-
   // 请求失败不用转义html
   function addFailMessage(message) {
     $(".answer .tips").css({"display":"none"});      // 打赏卡隐藏
@@ -88,12 +84,27 @@ $(document).ready(function() {
   
     let count = 0; // 新增计数器变量
     const maxCount = 10; // 最大询问次数
-  
+
+    // 处理clear
+  clearBtn.on('click', function() {
+    chatWindow.empty();  // 清空所有子元素
+    count= 0;  // 清空计数
+    messages = []
+    addFailMessage('<span style="color:red;">' + '你成功清除了所有内容，可以提10个新问题了！' + '</span>');
+  });
+    // 处理 reset
+  ResetBtn.on('click', function() {
+    count= 0;  // 清空计数
+    messages = []
+    addFailMessage('<span style="color:red;">' + '你成功重置了回复次数，可以提10个新问题了！' + '</span>');
+  });
+
+
   // 处理用户输入
   chatBtn.click(function() {
     // 测试点击次数
 	if (count >= maxCount) {
-      addFailMessage('<span style="color:red;">' + '已达最大提问次数！请刷新网页!' + '</span>');
+      addFailMessage('<span style="color:red;">' + '已达最大提问次数！请点击ResetC!' + '</span>');
     return;
     }
 	
@@ -143,6 +154,8 @@ $(document).ready(function() {
 
     // 收到回复前让按钮不可点击，让文本框显示等待并无法输入
     chatBtn.attr('disabled',true)
+    ResetBtn.attr('disabled',true)
+    clearBtn.attr('disabled',true)
     var placeholder = chatInput.attr('placeholder');
 	chatInput.attr('placeholder', '正在进行查询，请稍候...');
 	chatInput.prop('disabled', true);
@@ -175,6 +188,8 @@ $(document).ready(function() {
         addMessage(resp.content,"chatgpt.png");
         // 收到回复，让按钮可点击
         chatBtn.attr('disabled',false)
+        clearBtn.attr('disabled',false)
+        ResetBtn.attr('disabled',false)
         // 重新绑定键盘事件
         chatInput.on("keydown",handleEnter);
 		chatInput.attr('placeholder', placeholder);
@@ -189,6 +204,8 @@ $(document).ready(function() {
         addFailMessage('<span style="color:red;">' + '网络繁忙！请5s后再试...<之前正常收到的对话保留，除非网页刷新>' + '</span>');
         // 重新绑定键盘事件
 		chatBtn.attr('disabled',false)
+		ResetBtn.attr('disabled',false)
+		clearBtn.attr('disabled',false)
         chatInput.on("keydown",handleEnter);
 
 		chatInput.prop('disabled', false);
@@ -206,6 +223,10 @@ $(document).ready(function() {
   function handleEnter(e){
     if (e.keyCode==13){
       chatBtn.click();
+    }else if (e.altKey && e.keyCode === 82) {
+      ResetBtn.click();
+    }else if (e.altKey && e.keyCode === 67){
+      clearBtn.click();
     }
   }
 

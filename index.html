@@ -14,7 +14,7 @@
     <div class="row">
       <div class="col-xs-12">
         <div class="title">
-            <h2 class="text-center"> ChatGPT for Joey's friends</h2>
+            <h2 class="text-center">Joey's ChatGPT3.5</h2>
         </div>
         
         <div class="key">
@@ -30,7 +30,7 @@
           <div class="tips text-center">
             <!--  <h3 class="lead">API Key 暂有额度！无需打赏支持本站！</h3>   -->
             <h3 class="lead">请勿私自转发本站或API key！</h3>
-			<h3 class="lead">ChatGPT按反馈字数收费，每次提问将累计前面所有的问题和回复的字数，因此目前限制<span> 10 </span>次提问，若需再提问，请刷新网页，重输入API key。</h3>
+			<h3 class="lead">ChatGPT按反馈字数收费，每次提问将累计前面所有的问题和回复的字数，因此目前限制<span> 10 </span>次提问，10次以后请点击clear。</h3>
             <img src="./static/images/reward.png" width="400">
           </div>
           <div id="chatWindow"></div>
@@ -39,6 +39,8 @@
                 <input id="chatInput" class="form-control" type="search" placeholder="请输入你的问题">
               </div>
               <button id="chatBtn" class="btn btn-primary" type="button">Go !</button>
+              <button id="ResetBtn" class="btn btn-primary" type="button"><span style="text-decoration: underline">R</span>esetC</button>
+              <button id="clearBtn" class="btn btn-primary" type="button"><span style="text-decoration: underline">C</span>lear</button>
             </div>
           </div>
           
