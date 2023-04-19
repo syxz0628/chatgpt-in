@@ -83,7 +83,7 @@ $(document).ready(function() {
   }
   
     let count = 0; // 新增计数器变量
-    const maxCount = 2; // 最大询问次数
+    const maxCount = 10; // 最大询问次数
 
 
     // 处理clear
